@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Api; // <-- هادا هو السطر لي تصلح
+namespace App\Http\Controllers\Api; 
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\User; // <-- تأكد هادي كاينة
-use Illuminate\Support\Facades\Hash; // <-- تأكد هادي كاينة
+use App\Models\User; 
+use Illuminate\Support\Facades\Hash; 
 
 class AuthController extends Controller
 {

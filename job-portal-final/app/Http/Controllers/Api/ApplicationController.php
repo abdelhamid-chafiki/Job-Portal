@@ -27,7 +27,6 @@ class ApplicationController extends Controller
             return response(['message' => 'You have already applied for this job.'], 409); 
         }
 
-        // 3. كريي الـ Application
         $application = Application::create([
             'user_id' => Auth::id(), 
             'job_id' => $job->id,
