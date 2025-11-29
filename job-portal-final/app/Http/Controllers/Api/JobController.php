@@ -12,7 +12,7 @@ class JobController extends Controller
     
     public function index()
     {
-        return Job::with('user:id,name')->latest()->get();
+        return Job::with(['user:id,name', 'category:id,name,icon'])->latest()->get();
     }
 
     
@@ -21,7 +21,9 @@ class JobController extends Controller
        
         $fields = $request->validate([
             'title' => 'required|string',
-            'description' => 'required|string'
+            'description' => 'required|string',
+            'location' => 'required|string',
+            'category_id' => 'required|exists:categories,id'
         ]);
 
         
@@ -33,7 +35,9 @@ class JobController extends Controller
         $job = Job::create([
             'user_id' => Auth::id(), 
             'title' => $fields['title'],
-            'description' => $fields['description']
+            'description' => $fields['description'],
+            'location' => $fields['location'],
+            'category_id' => $fields['category_id']
         ]);
 
         return response($job, 201); 
