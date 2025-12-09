@@ -32,6 +32,26 @@ class ApplicationController extends Controller
             'job_id' => $job->id,
         ]);
 
-        return response($application, 201); 
+        return response($application->load(['user:id,name,email', 'job:id,title,location']), 201); 
+    }
+
+    public function getJobApplicants(Job $job)
+    {
+        if ($job->user_id !== Auth::id()) {
+            return response(['message' => 'Unauthorized'], 403);
+        }
+
+        $applicants = Application::where('job_id', $job->id)->with('user:id,name,email')->get();
+        return response($applicants, 200);
+    }
+
+    public function getUserApplications($userId)
+    {
+        if ($userId != Auth::id()) {
+            return response(['message' => 'Unauthorized'], 403);
+        }
+
+        $applications = Application::where('user_id', $userId)->with(['job:id,title,location', 'job.category:id,name'])->get();
+        return response($applications, 200);
     }
 }

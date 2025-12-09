@@ -3,9 +3,11 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Database\Seeder;
+use App\Models\Job;
+use App\Models\Category;
+use App\Models\User;
 
 class JobsTableSeeder extends Seeder
 {
@@ -17,19 +19,32 @@ class JobsTableSeeder extends Seeder
         // Convert JSON to array
         $jobs = json_decode($json, true);
 
-        // Insert jobs into database
-        foreach ($jobs as $job) {
-            DB::table('jobs')->insert([
-                'title'       => $job['title'],
-                'location'    => $job['location'],
-                'level'       => $job['level'],
-                'company_id'  => $job['company_id'],
-                'description' => $job['description'],
-                'salary'      => $job['salary'],
-                'category'    => $job['category'],
-                'created_at'  => now(),
-                'updated_at'  => now(),
+        // Get or create a default recruiter user
+        $recruiter = User::where('role', 'recruiter')->first();
+        if (!$recruiter) {
+            $recruiter = User::create([
+                'name' => 'Default Recruiter',
+                'email' => 'recruiter@jobportal.com',
+                'password' => bcrypt('password'),
+                'role' => 'recruiter',
             ]);
+        }
+
+        // Insert jobs into database
+        foreach ($jobs as $jobData) {
+            // Find category by name
+            $category = Category::where('name', $jobData['category'])->first();
+            
+            if ($category) {
+                Job::create([
+                    'title'       => $jobData['title'],
+                    'location'    => $jobData['location'],
+                    'level'       => $jobData['level'],
+                    'description' => $jobData['description'],
+                    'user_id'     => $recruiter->id,
+                    'category_id' => $category->id,
+                ]);
+            }
         }
     }
 }

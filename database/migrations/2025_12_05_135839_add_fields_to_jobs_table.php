@@ -13,7 +13,7 @@ return new class extends Migration
 {
     Schema::table('jobs', function (Blueprint $table) {
         $table->string('location')->after('description');
-        $table->string('level')->after('location');
+        $table->string('level')->nullable()->default('Entry Level')->after('location');
         $table->foreignId('category_id')
               ->after('level')
               ->constrained()

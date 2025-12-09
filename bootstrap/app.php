@@ -18,8 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
     $middleware->api(prepend: [
         \App\Http\Middleware\Cors::class, 
     ]);
-})
-
+    })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
     })->create();

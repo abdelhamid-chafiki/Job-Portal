@@ -12,7 +12,7 @@ class JobController extends Controller
     
     public function index()
     {
-        return Job::orderBy('created_at', 'desc')->get();
+        return Job::with(['user:id,name', 'category:id,name,icon'])->orderBy('created_at', 'desc')->get();
     }
 
     
@@ -23,7 +23,7 @@ class JobController extends Controller
             'title' => 'required|string',
             'description' => 'required|string',
             'location' => 'required|string',
-            'category_id' => 'required|exists:categories,id'
+            'category_id' => 'required|integer|exists:categories,id'
         ]);
 
         
@@ -46,8 +46,7 @@ class JobController extends Controller
    
     public function show(Job $job)
     {
-
-        return $job->load('user:id,name'); 
+        return $job->load(['user:id,name', 'category:id,name,icon']); 
     }
 
     
@@ -80,5 +79,16 @@ class JobController extends Controller
         $job->delete();
         
         return response(['message' => 'Job deleted successfully.'], 200);
+    }
+
+    public function getLocations()
+    {
+        $locations = Job::distinct()->pluck('location')->filter()->values();
+        return $locations;
+    }
+
+    public function getLevels()
+    {
+        return ['Entry Level', 'Mid Level', 'Senior', 'Manager', 'Executive'];
     }
 }

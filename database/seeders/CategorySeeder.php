@@ -14,11 +14,12 @@ class CategorySeeder extends Seeder
     public function run(): void
     {
         $categories = [
-            ['name' => 'IT & Development', 'icon' => 'fa-laptop-code'],
-            ['name' => 'Design & Creative', 'icon' => 'fa-palette'],
-            ['name' => 'Marketing & Sales', 'icon' => 'fa-bullhorn'],
-            ['name' => 'Finance', 'icon' => 'fa-chart-line'],
-            ['name' => 'Human Resources', 'icon' => 'fa-users'],
+            ['name' => 'Developpement Web', 'icon' => 'fa-laptop-code'],
+            ['name' => 'Developpement Mobile', 'icon' => 'fa-mobile-alt'],
+            ['name' => 'Data Science', 'icon' => 'fa-database'],
+            ['name' => 'Cybersecurity', 'icon' => 'fa-shield-alt'],
+            ['name' => 'DevOps', 'icon' => 'fa-cogs'],
+            ['name' => 'Reseaux', 'icon' => 'fa-network-wired'],
         ];
 
         foreach ($categories as $cat) {

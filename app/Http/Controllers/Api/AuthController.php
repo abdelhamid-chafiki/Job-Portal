@@ -76,62 +76,73 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
-        $fields = $request->validate([
-            'firstName' => 'required|string',
-            'lastName' => 'required|string',
-            'email' => 'required|string|unique:users,email',
-            'password' => 'required|string',
-        ]);
+        try {
+            $fields = $request->validate([
+                'firstName' => 'required|string',
+                'lastName' => 'required|string',
+                'email' => 'required|string|unique:users,email',
+                'password' => 'required|string',
+            ]);
 
-        // Combine firstName and lastName for the name field
-        $name = $fields['firstName'] . ' ' . $fields['lastName'];
-        // Default role to 'applicant'
-        $role = 'applicant';
+            // Combine firstName and lastName for the name field
+            $name = $fields['firstName'] . ' ' . $fields['lastName'];
+            // Default role to 'applicant'
+            $role = 'applicant';
 
-        $user = User::create([
-            'name' => $name,
-            'email' => $fields['email'],
-            'password' => Hash::make($fields['password']),
-            'role' => $role
-        ]);
+            $user = User::create([
+                'name' => $name,
+                'email' => $fields['email'],
+                'password' => Hash::make($fields['password']),
+                'role' => $role
+            ]);
 
-        $token = $user->createToken('myapptoken')->plainTextToken;
+            $token = $user->createToken('myapptoken')->plainTextToken;
 
-        $response = [
-            'user' => $user,
-            'token' => $token,
-        ];
+            $response = [
+                'user' => $user,
+                'token' => $token,
+            ];
 
-        return response($response, 201);
+            return response($response, 201);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response(['message' => 'Validation error', 'errors' => $e->errors()], 422);
+        } catch (\Exception $e) {
+            \Log::error('Registration error: ' . $e->getMessage());
+            return response(['message' => 'Registration failed: ' . $e->getMessage()], 500);
+        }
     }
 
    
     public function login(Request $request)
     {
-        
-        $fields = $request->validate([
-            'email' => 'required|string|email',
-            'password' => 'required|string'
-        ]);
+        try {
+            $fields = $request->validate([
+                'email' => 'required|string|email',
+                'password' => 'required|string'
+            ]);
 
-        $user = User::where('email', $fields['email'])->first();
+            $user = User::where('email', $fields['email'])->first();
 
-        
-        if (!$user || !Hash::check($fields['password'], $user->password)) {
-            return response([
-                'message' => 'Email or password incorrect'
-            ], 401); 
+            if (!$user || !Hash::check($fields['password'], $user->password)) {
+                return response([
+                    'message' => 'Email or password incorrect'
+                ], 401); 
+            }
+
+            $token = $user->createToken('myapptoken')->plainTextToken;
+
+            $response = [
+                'user' => $user,
+                'token' => $token
+            ];
+
+            return response($response, 200); 
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response(['message' => 'Validation error', 'errors' => $e->errors()], 422);
+        } catch (\Exception $e) {
+            \Log::error('Login error: ' . $e->getMessage());
+            return response(['message' => 'Login failed: ' . $e->getMessage()], 500);
         }
-
-        
-        $token = $user->createToken('myapptoken')->plainTextToken;
-
-        $response = [
-            'user' => $user,
-            'token' => $token
-        ];
-
-        return response($response, 200); 
     }
 
     public function logout(Request $request)
