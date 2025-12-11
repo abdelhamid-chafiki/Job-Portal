@@ -43,6 +43,7 @@ class JobsTableSeeder extends Seeder
                     'description' => $jobData['description'],
                     'user_id'     => $recruiter->id,
                     'category_id' => $category->id,
+                    'status'      => 'approved', // Set all seeded jobs as approved
                 ]);
             }
         }

@@ -18,15 +18,30 @@ return new class extends Migration
               ->after('level')
               ->constrained()
               ->onDelete('cascade');
+        $table->string('status')->default('pending')->after('category_id'); // pending, approved, rejected
     });
 }
 
 public function down(): void
 {
     Schema::table('jobs', function (Blueprint $table) {
-        $table->dropColumn(['location', 'level']);
-        $table->dropForeign(['category_id']);
-        $table->dropColumn('category_id');
+        if (Schema::hasColumn('jobs', 'location')) {
+            $table->dropColumn('location');
+        }
+        if (Schema::hasColumn('jobs', 'level')) {
+            $table->dropColumn('level');
+        }
+        if (Schema::hasColumn('jobs', 'status')) {
+            $table->dropColumn('status');
+        }
+        if (Schema::hasColumn('jobs', 'category_id')) {
+            try {
+                $table->dropForeign(['category_id']);
+            } catch (\Exception $e) {
+                // Ignore if foreign key doesn't exist
+            }
+            $table->dropColumn('category_id');
+        }
     });
 }
 

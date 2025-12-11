@@ -9,6 +9,6 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        return Category::pluck('name')->values();
+        return Category::select('id', 'name', 'icon')->get();
     }
 }

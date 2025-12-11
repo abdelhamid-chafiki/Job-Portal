@@ -9,7 +9,21 @@ class Application extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'job_id'];
+    protected $table = 'applications';
+
+    protected $fillable = [
+        'user_id', 
+        'job_id', 
+        'status', 
+        'cover_letter',
+        'resume_path',
+        'rejection_reason',
+        'applied_at'
+    ];
+
+    protected $casts = [
+        'applied_at' => 'datetime',
+    ];
 
     public function user()
     {
